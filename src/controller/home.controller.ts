@@ -14,10 +14,10 @@ export class HomeController {
   @Get('/build')
   async build() {
     const { stdout, stderr } = await exec(
-      'slidev export ./slides.md --output my-pdf-export'
+      'slidev export ./slides.md --output /tmp/my-pdf-export'
     );
     console.log(stdout);
     console.log(stderr);
-    return fs.createReadStream('./my-pdf-export.pdf');
+    return fs.createReadStream('/tmp/my-pdf-export.pdf');
   }
 }
