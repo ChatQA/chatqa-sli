@@ -14,7 +14,7 @@ export class HomeController {
   @Get('/build')
   async build() {
     const { stdout, stderr } = await exec(
-      'slidev export slides.md --output my-pdf-export'
+      'slidev export ./slides.md --output my-pdf-export'
     );
     console.log(stdout);
     console.log(stderr);
