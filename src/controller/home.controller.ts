@@ -13,8 +13,31 @@ export class HomeController {
   }
   @Get('/build')
   async build() {
+    await fs.promises.writeFile('/tmp/slides.md',
+`---
+theme: seriph
+background: https://source.unsplash.com/collection/94734566/1920x1080
+class: text-center
+highlighter: shikiji
+lineNumbers: false
+info: |
+  ## Slidev Starter Template
+  Presentation slides for developers.
+
+  Learn more at [Sli.dev](https://sli.dev)
+drawings:
+  persist: false
+transition: slide-left
+title: Welcome to Slidev
+mdc: true
+---
+
+# Welcome to Slidev
+
+Presentation slides for developers
+`);
     const { stdout, stderr } = await exec(
-      'slidev export ./slides.md --output /tmp/my-pdf-export'
+      'slidev export /tmp/slides.md --output /tmp/my-pdf-export'
     );
     console.log(stdout);
     console.log(stderr);
