@@ -1,7 +1,9 @@
-import { Controller, Get } from '@midwayjs/core';
+import { Body, Controller, Get, Post } from '@midwayjs/core';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
 import * as util from 'util';
+import { BuildDTO } from '../dto/build.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 const exec = util.promisify(child_process.exec);
 
@@ -9,38 +11,17 @@ const exec = util.promisify(child_process.exec);
 export class HomeController {
   @Get('/')
   async home(): Promise<string> {
-    return 'Hello Midwayjs!';
+    return 'Hello ChatQA Cloud!';
   }
-  @Get('/build')
-  async build() {
-    await fs.promises.writeFile('/tmp/slides.md',
-`---
-theme: seriph
-background: https://source.unsplash.com/collection/94734566/1920x1080
-class: text-center
-highlighter: shikiji
-lineNumbers: false
-info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-drawings:
-  persist: false
-transition: slide-left
-title: Welcome to Slidev
-mdc: true
----
-
-# Welcome to Slidev
-
-Presentation slides for developers
-`);
+  @Post('/build')
+  async build(@Body() buildDto: BuildDTO) {
+    const cacheId = uuidv4();
+    await fs.promises.writeFile(`/tmp/${cacheId}.md`, buildDto.code);
     const { stdout, stderr } = await exec(
-      'slidev export /tmp/slides.md --output /tmp/my-pdf-export'
+      `slidev export /tmp/${cacheId}.md --output /tmp/${cacheId}`
     );
     console.log(stdout);
     console.log(stderr);
-    return fs.createReadStream('/tmp/my-pdf-export.pdf');
+    return fs.createReadStream(`/tmp/${cacheId}.pdf`);
   }
 }
