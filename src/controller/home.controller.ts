@@ -5,6 +5,7 @@ import * as util from 'util';
 import { BuildDTO } from '../dto/build.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { Context } from '@midwayjs/koa';
+//import { OSSService } from '@midwayjs/oss';
 
 const exec = util.promisify(child_process.exec);
 
@@ -12,6 +13,8 @@ const exec = util.promisify(child_process.exec);
 export class HomeController {
   @Inject()
   ctx: Context;
+  // @Inject()
+  // ossService: OSSService;
 
   @Get('/')
   async home(): Promise<string> {
@@ -26,7 +29,10 @@ export class HomeController {
     );
     console.log(stdout);
     console.log(stderr);
+    const localFile = `/tmp/${cacheId}.pdf`;
+    // const result = await this.ossService.put(`${cacheId}.pdf`, localFile);
+    // console.log(result);
     this.ctx.set('Content-Disposition', `attachment; filename=${cacheId}.pdf`);
-    return fs.createReadStream(`/tmp/${cacheId}.pdf`);
+    return fs.createReadStream(localFile);
   }
 }
